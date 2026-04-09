@@ -11,12 +11,19 @@ export async function POST(request: Request) {
 
     const { fullName, phone, email, preferredDate, preferredTime, serviceType, notes } = parsed.data;
 
-    const row = await queryOne<{ id: string }>(
-      `INSERT INTO appointments (full_name, phone, email, preferred_date, preferred_time, service_type, notes)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING id`,
-      [fullName, phone, email, preferredDate, preferredTime, serviceType, notes ?? null]
-    );
+    // DB write is best-effort — see contact route for rationale.
+    let id: string | null = null;
+    try {
+      const row = await queryOne<{ id: string }>(
+        `INSERT INTO appointments (full_name, phone, email, preferred_date, preferred_time, service_type, notes)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING id`,
+        [fullName, phone, email, preferredDate, preferredTime, serviceType, notes ?? null]
+      );
+      id = row?.id ?? null;
+    } catch (dbErr) {
+      console.error('[appointments] DB insert failed, continuing to email:', dbErr);
+    }
 
     // Email notification — best-effort, don't block response on failure.
     void sendClinicNotification({
@@ -25,7 +32,7 @@ export async function POST(request: Request) {
       replyTo: email,
     });
 
-    return apiResponse({ id: row!.id, message: 'Appointment booked successfully' }, 201);
+    return apiResponse({ id, message: 'Appointment booked successfully' }, 201);
   } catch (err) {
     return apiInternalError(err);
   }

@@ -11,12 +11,20 @@ export async function POST(request: Request) {
 
     const { name, email, phone, message } = parsed.data;
 
-    const row = await queryOne<{ id: string }>(
-      `INSERT INTO contacts (name, email, phone, message)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id`,
-      [name, email, phone ?? null, message]
-    );
+    // DB write is best-effort — if Postgres is unreachable we still send the
+    // email and report success. The email is the load-bearing path.
+    let id: string | null = null;
+    try {
+      const row = await queryOne<{ id: string }>(
+        `INSERT INTO contacts (name, email, phone, message)
+         VALUES ($1, $2, $3, $4)
+         RETURNING id`,
+        [name, email, phone ?? null, message]
+      );
+      id = row?.id ?? null;
+    } catch (dbErr) {
+      console.error('[contact] DB insert failed, continuing to email:', dbErr);
+    }
 
     // Email notification — best-effort, don't block response on failure.
     void sendClinicNotification({
@@ -25,7 +33,7 @@ export async function POST(request: Request) {
       replyTo: email,
     });
 
-    return apiResponse({ id: row!.id, message: 'Message sent successfully' }, 201);
+    return apiResponse({ id, message: 'Message sent successfully' }, 201);
   } catch (err) {
     return apiInternalError(err);
   }
