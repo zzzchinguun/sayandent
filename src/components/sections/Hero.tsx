@@ -88,21 +88,23 @@ export function Hero() {
   const progressMV = useMotionValue(0);
   const smoothProgress = useSpring(progressMV, { stiffness: 80, damping: 25, restDelta: 0.001 });
 
-  const [staff, setStaff] = useState<StaffMember[]>([]);
-  useEffect(() => {
-    let cancelled = false;
-    fetch(`/api/staff?locale=${locale}`)
-      .then((r) => r.json())
-      .then((res) => {
-        if (cancelled) return;
-        const list: StaffMember[] = res?.data ?? res ?? [];
-        setStaff(Array.isArray(list) ? list : []);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, [locale]);
+  // Hard-coded for now — DB call replaced so the carousel works without
+  // a live Postgres connection (e.g. on Vercel before envs are wired).
+  const STAFF_MN: StaffMember[] = [
+    { id: '1', slug: 'dr-sonin-batsanaa', image_url: '/images/staff/sonin-batsanaa.png', name: 'Сонин Батсанаа', title: 'Нүүр амны мэс заслын их эмч, Согог заслын их эмч' },
+    { id: '2', slug: 'dr-onon-erdenebat', image_url: '/images/staff/onon-erdenebat.png', name: 'Онон Эрдэнэбат', title: 'Нүүр амны их эмч' },
+    { id: '3', slug: 'dr-ganbaatar-erdenezorig', image_url: '/images/staff/ganbaatar-erdenezorig.png', name: 'Ганбаатар Эрдэнэзориг', title: 'Нүүр амны их эмч' },
+    { id: '4', slug: 'dr-ganbayar-khongorzul', image_url: '/images/staff/ganbayar-khongorzul.png', name: 'Ганбаяр Хонгорзул', title: 'Нүүр амны их эмч' },
+    { id: '5', slug: 'dr-ganbold-tsenguun', image_url: '/images/staff/ganbold-tsenguun.png', name: 'Ганболд Цэнгүүн', title: 'Нүүр амны их эмч' },
+  ];
+  const STAFF_EN: StaffMember[] = [
+    { id: '1', slug: 'dr-sonin-batsanaa', image_url: '/images/staff/sonin-batsanaa.png', name: 'Sonin Batsanaa', title: 'Oral Surgeon & Orthodontist' },
+    { id: '2', slug: 'dr-onon-erdenebat', image_url: '/images/staff/onon-erdenebat.png', name: 'Onon Erdenebat', title: 'General Dentist' },
+    { id: '3', slug: 'dr-ganbaatar-erdenezorig', image_url: '/images/staff/ganbaatar-erdenezorig.png', name: 'Ganbaatar Erdenezorig', title: 'General Dentist' },
+    { id: '4', slug: 'dr-ganbayar-khongorzul', image_url: '/images/staff/ganbayar-khongorzul.png', name: 'Ganbayar Khongorzul', title: 'General Dentist' },
+    { id: '5', slug: 'dr-ganbold-tsenguun', image_url: '/images/staff/ganbold-tsenguun.png', name: 'Ganbold Tsenguun', title: 'General Dentist' },
+  ];
+  const staff = locale === 'en' ? STAFF_EN : STAFF_MN;
 
   // Single rAF-throttled scroll listener → 0..1 progress for the 3D model.
   // maxScroll mirrors the iPhone setup: ~90vh on desktop, 600px on mobile.
