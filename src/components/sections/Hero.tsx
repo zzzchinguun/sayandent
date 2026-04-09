@@ -143,9 +143,11 @@ export function Hero() {
   const [containerWidth, setContainerWidth] = useState(340);
   useEffect(() => {
     const updateSizes = () => {
-      const isLg = window.innerWidth >= 1024;
-      setCardStep(isLg ? 272 : 232); // 260+12 or 220+12
-      setContainerWidth(Math.min(340, window.innerWidth * 0.28));
+      const w = window.innerWidth;
+      const isLg = w >= 1024;
+      const isMd = w >= 768;
+      setCardStep(isLg ? 272 : isMd ? 232 : 172); // lg/md/mobile: 260/220/160 + 12 gap
+      setContainerWidth(isMd ? Math.min(340, w * 0.28) : w - 32);
     };
     updateSizes();
     window.addEventListener('resize', updateSizes);
@@ -172,7 +174,7 @@ export function Hero() {
           <div className="absolute left-0 right-0 bottom-20 h-px bg-earth-200" />
         </div>
         {/* 3D Model — centered, full-bleed, sits behind text */}
-        <div className="absolute inset-0 hidden md:block pointer-events-none z-30">
+        <div className="absolute inset-0 pointer-events-none z-30">
           {mounted && (
             <Canvas
               frameloop="demand"
@@ -215,7 +217,7 @@ export function Hero() {
             page padding. */}
         {staff.length > 0 && (
           <div
-            className="hidden md:block absolute bottom-24 left-2/3 right-0 z-10 pointer-events-auto overflow-hidden pl-6 lg:pl-10"
+            className="absolute bottom-8 md:bottom-24 left-0 md:left-2/3 right-0 z-10 pointer-events-auto overflow-hidden pl-4 md:pl-6 lg:pl-10"
           >
             <motion.div
               className="flex items-stretch gap-3"
@@ -224,7 +226,7 @@ export function Hero() {
               {staff.map((member) => (
                 <div
                   key={member.id}
-                  className="relative shrink-0 w-[220px] h-[300px] lg:w-[260px] lg:h-[380px] rounded-2xl overflow-hidden bg-primary-900 shadow-xl border border-earth-200"
+                  className="relative shrink-0 w-[160px] h-[220px] md:w-[220px] md:h-[300px] lg:w-[260px] lg:h-[380px] rounded-2xl overflow-hidden bg-primary-900 shadow-xl border border-earth-200"
                 >
                   {member.image_url ? (
                     <Image
