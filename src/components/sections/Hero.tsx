@@ -217,7 +217,7 @@ export function Hero() {
             page padding. */}
         {staff.length > 0 && (
           <div
-            className="absolute bottom-8 md:bottom-24 left-0 md:left-2/3 right-0 z-10 pointer-events-auto overflow-hidden pl-4 md:pl-6 lg:pl-10"
+            className="hidden md:block absolute bottom-24 left-2/3 right-0 z-10 pointer-events-auto overflow-hidden pl-6 lg:pl-10"
           >
             <motion.div
               className="flex items-stretch gap-3"
