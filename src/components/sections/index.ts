@@ -1,0 +1,9 @@
+export { Hero } from './Hero';
+export { Services } from './Services';
+export { Treatments } from './Treatments';
+export { Pricing } from './Pricing';
+export { TrustBar } from './TrustBar';
+export { Testimonials } from './Testimonials';
+export { FAQ } from './FAQ';
+export { Appointment } from './Appointment';
+export { Contact } from './Contact';

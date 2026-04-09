@@ -1,26 +1,163 @@
 @import "tailwindcss";
 
+/* Reserve space for the scrollbar so locking body scroll (e.g. opening
+   the mobile menu) doesn't shift centered content horizontally. */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* ===== Sayan Dent Custom Theme ===== */
+/* 60-30-10 Color Rule:
+   60% - Background/Base: #FFFFFF (clean white)
+   30% - Primary/Purple: #852464 (rich plum purple)
+   10% - Accent/Gold: #B68E4E (warm bronze/gold)
+*/
+@theme {
+  /* Primary Purple (30%) #852464 */
+  --color-primary-50: #fdf2f9;
+  --color-primary-100: #fbe6f3;
+  --color-primary-200: #f5cce5;
+  --color-primary-300: #eba3cf;
+  --color-primary-400: #d46faf;
+  --color-primary-500: #b84890;
+  --color-primary-600: #852464;
+  --color-primary-700: #6e1d53;
+  --color-primary-800: #5a1a44;
+  --color-primary-900: #3d1130;
+  --color-primary-950: #24091c;
+
+  /* Accent Gold/Bronze (10%) #B68E4E */
+  --color-accent-50: #fdf8f0;
+  --color-accent-100: #f9edd8;
+  --color-accent-200: #f2d9ae;
+  --color-accent-300: #e6be7e;
+  --color-accent-400: #d4a35e;
+  --color-accent-500: #b68e4e;
+  --color-accent-600: #9a7340;
+  --color-accent-700: #7d5b33;
+  --color-accent-800: #64482a;
+  --color-accent-900: #4d3721;
+  --color-accent-950: #2e2013;
+
+  /* Background/Base (60%) #FFFFFF — with subtle warm tints for depth */
+  --color-base-50: #ffffff;
+  --color-base-100: #fefcfa;
+  --color-base-200: #faf6f2;
+  --color-base-300: #f3ede6;
+  --color-base-400: #e8ddd2;
+  --color-base-500: #d4c4b4;
+  --color-base-600: #b8a490;
+  --color-base-700: #96806c;
+  --color-base-800: #6e5d4e;
+  --color-base-900: #4a3e34;
+  --color-base-950: #2a231d;
+
+  /* Green aliases pointing to primary for component compatibility */
+  --color-green-50: #fdf2f9;
+  --color-green-100: #fbe6f3;
+  --color-green-200: #f5cce5;
+  --color-green-300: #eba3cf;
+  --color-green-400: #d46faf;
+  --color-green-500: #b84890;
+  --color-green-600: #852464;
+  --color-green-700: #6e1d53;
+  --color-green-800: #5a1a44;
+  --color-green-900: #3d1130;
+  --color-green-950: #24091c;
+
+  /* Earth/Neutral tones — warm grays to complement the palette */
+  --color-earth-50: #fafaf9;
+  --color-earth-100: #f5f4f1;
+  --color-earth-200: #e7e5e0;
+  --color-earth-300: #d5d1ca;
+  --color-earth-400: #a8a19a;
+  --color-earth-500: #78716c;
+  --color-earth-600: #5c564f;
+  --color-earth-700: #44403c;
+  --color-earth-800: #292524;
+  --color-earth-900: #1c1917;
+  --color-earth-950: #0c0a09;
+
+  /* Font families */
+  --font-sans: var(--font-exo2), system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+  --font-display: var(--font-exo2), system-ui, sans-serif;
+  --font-inter: var(--font-exo2), system-ui, sans-serif;
+
+  /* Custom animations */
+  --animate-fade-in: fade-in 0.8s ease-out;
+  --animate-slide-up: slide-up 0.8s ease-out;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse 4s ease-in-out infinite;
+  --animate-chatbot-pulse: chatbot-pulse 2s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes float-custom {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scroll-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes chatbot-pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #3d1130;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-exo2), 'Exo 2', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+::selection {
+  background-color: var(--color-accent-400);
+  color: var(--color-primary-950);
+}
+
+@media (max-width: 640px) {
+  ::-webkit-scrollbar { display: none; }
+  html, body { scrollbar-width: none; }
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-base-200); }
+::-webkit-scrollbar-thumb { background: var(--color-primary-500); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary-600); }

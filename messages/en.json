@@ -1,0 +1,414 @@
+{
+  "metadata": {
+    "title": "Sayan Dent - Professional Dental Care",
+    "description": "Professional dental care for the whole family. Implants, orthodontics, teeth whitening, and more."
+  },
+  "navigation": {
+    "home": "Home",
+    "services": "Services",
+    "appointment": "Book Appointment",
+    "contact": "Contact",
+    "testimonials": "Testimonials",
+    "login": "Login"
+  },
+  "hero": {
+    "titleLine1": "Your\nSmile,",
+    "titleLine2": "Our\nPriority",
+    "shortDescription": "Professional dental care for the whole family. Modern equipment, experienced doctors, and a comfortable environment."
+  },
+  "services": {
+    "titleText1": "Our",
+    "titleText2": "Services",
+    "subtitle": "Only the services we actually offer — nothing made up.",
+    "oral": {
+      "title": "Oral Care",
+      "outcome": "A healthy, clean mouth",
+      "treatments": {
+        "checkup": {
+          "name": "Consultation",
+          "desc": "Initial dental exam"
+        },
+        "scaling": {
+          "name": "Scaling & Polishing",
+          "desc": "Removes tartar and stains"
+        },
+        "airflow": {
+          "name": "Airflow",
+          "desc": "Deep cleaning treatment"
+        },
+        "fluoride": {
+          "name": "Fluoride Treatment",
+          "desc": "Enamel protection"
+        }
+      }
+    },
+    "xray": {
+      "title": "Dental X-Ray",
+      "outcome": "Accurate diagnosis",
+      "treatments": {
+        "panoramic": {
+          "name": "Panoramic X-Ray",
+          "desc": "Full-mouth imaging"
+        },
+        "periapical": {
+          "name": "Periapical X-Ray",
+          "desc": "Single tooth imaging"
+        }
+      }
+    },
+    "cosmetic": {
+      "title": "Cosmetic Dentistry",
+      "outcome": "Your perfect smile",
+      "treatments": {
+        "whiteningOffice": {
+          "name": "In-Office Whitening",
+          "desc": "Professional brightening"
+        },
+        "whiteningHome": {
+          "name": "At-Home Whitening",
+          "desc": "Take-home kit"
+        },
+        "veneers": {
+          "name": "Dental Veneers",
+          "desc": "Natural surfaces"
+        },
+        "ribbond": {
+          "name": "Ribbond Bridge",
+          "desc": "Aesthetic restoration"
+        }
+      }
+    },
+    "restorative": {
+      "title": "Restorative Dentistry",
+      "outcome": "Save and rebuild your teeth",
+      "treatments": {
+        "fillings": {
+          "name": "Dental Fillings",
+          "desc": "Surface, medium, deep"
+        },
+        "rootCanal": {
+          "name": "Root Canal Treatment",
+          "desc": "Anterior & molar"
+        },
+        "crowns": {
+          "name": "Dental Crowns",
+          "desc": "Zirconia & metal-ceramic"
+        },
+        "emax": {
+          "name": "Emax Veneer",
+          "desc": "Premium restoration"
+        }
+      }
+    }
+  },
+  "pricing": {
+    "eyebrow": "Pricing",
+    "titleNum": "Transparent",
+    "titleText": "Price List",
+    "subtitle": "We keep our pricing fair and transparent — no surprises.",
+    "disclaimer": "* Final price may vary by case and is confirmed after consultation."
+  },
+  "treatments": {
+    "titleText": "Our Treatments",
+    "subtitle": "A short selection of what we offer — see the full list and prices in the pricing section below.",
+    "viewAll": "View all services & pricing",
+    "learnMore": "Learn more",
+    "back": "Back",
+    "methodology": "Approach",
+    "outcomes": "Benefits",
+    "scaling": {
+      "title": "Scaling & Polishing",
+      "description": "Removes tartar, plaque, and stains for healthier gums and a cleaner mouth.",
+      "headline": "A clean, healthy mouth",
+      "methodologyDesc": "Ultrasonic scaling followed by polishing with professional-grade paste.",
+      "outcome1": "Removes tartar and stains",
+      "outcome2": "Prevents gum disease",
+      "outcome3": "Freshens breath"
+    },
+    "airflow": {
+      "title": "Airflow Cleaning",
+      "description": "Deep dental cleaning using a fine jet of water and bicarbonate.",
+      "headline": "Gentle but thorough deep clean",
+      "methodologyDesc": "A fine pressurized stream lifts surface stains without abrasive contact.",
+      "outcome1": "Deep clean",
+      "outcome2": "Brighter teeth",
+      "outcome3": "Healthier gums"
+    },
+    "fluoride": {
+      "title": "Fluoride Treatment",
+      "description": "Strengthens enamel and helps prevent cavities.",
+      "headline": "Enamel protection",
+      "methodologyDesc": "Professional fluoride gel is applied to remineralize the enamel.",
+      "outcome1": "Cavity prevention",
+      "outcome2": "Stronger enamel",
+      "outcome3": "Reduced sensitivity"
+    },
+    "fillings": {
+      "title": "Dental Fillings",
+      "description": "Surface, medium, or deep composite fillings to restore damaged teeth.",
+      "headline": "Seamless cavity restoration",
+      "methodologyDesc": "Tooth-colored composite resin matched to your natural shade.",
+      "outcome1": "Natural appearance",
+      "outcome2": "Preserves tooth structure",
+      "outcome3": "Long-lasting durability"
+    },
+    "whitening": {
+      "title": "Teeth Whitening",
+      "description": "In-office or take-home professional whitening.",
+      "headline": "A brighter, more confident smile",
+      "methodologyDesc": "LED-activated peroxide gel for visible results.",
+      "outcome1": "Several shades brighter",
+      "outcome2": "Safe for enamel",
+      "outcome3": "Fast results"
+    },
+    "veneers": {
+      "title": "Dental Veneers",
+      "description": "Thin ceramic shells placed over the front of teeth to enhance appearance.",
+      "headline": "Natural-looking smile design",
+      "methodologyDesc": "Ultra-thin porcelain veneers bonded to the tooth surface.",
+      "outcome1": "Natural look",
+      "outcome2": "Even color",
+      "outcome3": "Long-lasting"
+    },
+    "rootCanal": {
+      "title": "Root Canal Treatment",
+      "description": "Modern endodontic treatment for anterior and molar teeth.",
+      "headline": "Save your natural tooth",
+      "methodologyDesc": "Advanced rotary endodontics with electronic apex locator.",
+      "outcome1": "Eliminates infection",
+      "outcome2": "Saves natural tooth",
+      "outcome3": "Relieves pain"
+    },
+    "zirconia": {
+      "title": "Zirconia Crown",
+      "description": "Strong, aesthetic crowns made from zirconia ceramic.",
+      "headline": "Strength meets aesthetics",
+      "methodologyDesc": "Digitally fabricated zirconia crown bonded to the prepared tooth.",
+      "outcome1": "Metal-free",
+      "outcome2": "Natural look",
+      "outcome3": "Long-lasting"
+    },
+    "emax": {
+      "title": "Emax Veneer",
+      "description": "Premium single-tooth ceramic veneer.",
+      "headline": "Premium restoration",
+      "methodologyDesc": "Lithium disilicate glass ceramic for ultra-thin, lifelike veneers.",
+      "outcome1": "Highest detail",
+      "outcome2": "Natural translucency",
+      "outcome3": "Long-lasting durability"
+    }
+  },
+  "trustBar": {
+    "title": "Technologies we use",
+    "partners": {
+      "experience": {
+        "name": "15+ Years Experience",
+        "what": "Over 15 years of dedicated dental practice serving our community.",
+        "how": "Our experienced team has performed thousands of successful procedures.",
+        "benefit1": "Proven track record of successful treatments",
+        "benefit2": "Deep expertise across all dental specialties"
+      },
+      "doctors": {
+        "name": "5+ Specialist Dentists",
+        "what": "Five experienced, specialized dentists on staff.",
+        "how": "Specialists across oral care, cosmetic, and restorative dentistry.",
+        "benefit1": "Multidisciplinary expertise",
+        "benefit2": "Personalized treatment plans"
+      },
+      "patients": {
+        "name": "10,000+ Happy Patients",
+        "what": "Trusted by over ten thousand patients and their families.",
+        "how": "Our patient-first approach ensures comfort and satisfaction.",
+        "benefit1": "High patient satisfaction rate",
+        "benefit2": "Strong word-of-mouth referrals"
+      },
+      "services": {
+        "name": "25+ Treatment Types",
+        "what": "More than 25 dental services under one roof.",
+        "how": "From routine check-ups to advanced restorative care.",
+        "benefit1": "All treatments in one place",
+        "benefit2": "The right option for every need"
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "Testimonials",
+    "title": "What Our Patients Say",
+    "subtitle": "Real stories from real patients about their experience at Sayan Dent",
+    "items": {
+      "t1": {
+        "name": "Zula Erdenebat",
+        "role": "Facebook review",
+        "content": "Wishing the team and my friend Onon Erdenebat the highest success in their work 🤗",
+        "avatar": "ZE"
+      },
+      "t2": {
+        "name": "Erdenechimeg Mangal",
+        "role": "Facebook review",
+        "content": "Highly skilled professionals, the doctors and nurses all have wonderful manners. So happy to have found this great place! Wishing even more success in their noble work of healing and bringing smiles ❣️",
+        "avatar": "EM"
+      },
+      "t3": {
+        "name": "Nyambuu Buyandavaa",
+        "role": "Facebook review",
+        "content": "My friends are skilled professionals with great attitude and communication. They are among the leading faces of their field. Wishing them success!",
+        "avatar": "NB"
+      },
+      "t4": {
+        "name": "Doljinsvren Shagjaa",
+        "role": "Facebook review",
+        "content": "Wow! They have powerful equipment with full imaging capabilities. Wishing them success!",
+        "avatar": "DS"
+      },
+      "t5": {
+        "name": "Erdentuya E.",
+        "role": "Facebook review",
+        "content": "Wishing them great success in their work!",
+        "avatar": "EE"
+      },
+      "t6": {
+        "name": "Анна Соколова",
+        "role": "Google отзыв",
+        "content": "Делала имплантацию в Sayan Dent — всё прошло на высшем уровне. Врачи внимательные, объяснили каждый шаг, оборудование современное, никакого дискомфорта во время процедуры. Результат превзошёл ожидания, улыбкой пользуюсь с удовольствием. Однозначно рекомендую!",
+        "avatar": "АС"
+      },
+      "t7": {
+        "name": "Chinguun",
+        "role": "Google review · 7 reviews",
+        "content": "They had sophisticated and professional doctors, recommended if quality is what you're looking for.",
+        "avatar": "CH"
+      },
+      "t8": {
+        "name": "Содбилэг Батсанаа",
+        "role": "Google review · 2 reviews",
+        "content": "Awesome dental clinic with great performance excellent quality.",
+        "avatar": "СБ"
+      }
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to common questions about our dental services",
+    "items": [
+      {
+        "q": "Does it hurt to get a dental implant?",
+        "a": "Modern dental implant procedures are performed under local anesthesia and are virtually painless. Most patients report less discomfort than a tooth extraction. We also offer sedation options for anxious patients."
+      },
+      {
+        "q": "How often should I visit the dentist?",
+        "a": "We recommend visiting every 6 months for a routine check-up and professional cleaning. However, if you have specific dental conditions, your dentist may recommend more frequent visits."
+      },
+      {
+        "q": "Do you accept dental insurance?",
+        "a": "Yes, we work with most major dental insurance providers. Our team will help you understand your coverage and maximize your benefits. We also offer flexible payment plans."
+      },
+      {
+        "q": "How long does teeth whitening last?",
+        "a": "Professional teeth whitening results typically last 1-3 years depending on your diet, oral hygiene habits, and lifestyle factors like coffee or tea consumption."
+      },
+      {
+        "q": "What age should children first visit the dentist?",
+        "a": "We recommend bringing your child for their first dental visit by age 1 or within 6 months of their first tooth appearing. Early visits help establish good oral health habits."
+      },
+      {
+        "q": "Are braces or clear aligners better?",
+        "a": "Both options are effective. Clear aligners are nearly invisible and removable, ideal for mild to moderate cases. Traditional braces are better for complex alignment issues. We will recommend the best option during your consultation."
+      }
+    ]
+  },
+  "appointment": {
+    "title": "Book an Appointment",
+    "subtitle": "Schedule your visit online - we'll confirm within 24 hours",
+    "progressLabel": "Completion",
+    "patientInfo": "Patient Information",
+    "scheduleInfo": "Appointment Details",
+    "additionalInfo": "Additional Notes",
+    "steps": {
+      "patient": "Patient Info",
+      "schedule": "Schedule",
+      "additional": "Notes",
+      "submit": "Confirm"
+    },
+    "form": {
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Your full name",
+      "phone": "Phone Number",
+      "phonePlaceholder": "+976 9999 9999",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "preferredDate": "Preferred Date",
+      "preferredTime": "Preferred Time",
+      "serviceType": "Service Type",
+      "serviceOptions": {
+        "cleaning": "Professional Cleaning",
+        "filling": "Dental Fillings",
+        "whitening": "Teeth Whitening",
+        "implant": "Dental Implants",
+        "orthodontics": "Braces & Aligners",
+        "rootCanal": "Root Canal",
+        "crown": "Crowns & Bridges",
+        "extraction": "Tooth Extraction",
+        "pediatric": "Children's Dentistry",
+        "other": "Other / Consultation"
+      },
+      "notes": "Additional Notes",
+      "notesPlaceholder": "Any specific concerns or requests...",
+      "submit": "Book Appointment",
+      "success": "Appointment Requested!",
+      "successDesc": "We've received your booking request. Our team will contact you within 24 hours to confirm your appointment.",
+      "error": "Something went wrong. Please try again or call us directly.",
+      "submitAnother": "Book Another Appointment",
+      "nextSteps": {
+        "step1": {
+          "title": "Confirmation Call",
+          "desc": "We'll call to confirm your appointment time"
+        },
+        "step2": {
+          "title": "Preparation",
+          "desc": "Arrive 10 minutes early with your ID"
+        },
+        "step3": {
+          "title": "Your Visit",
+          "desc": "Relax and let our experts take care of you"
+        }
+      }
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with our team for any questions or inquiries",
+    "info": {
+      "address": "Address",
+      "addressValue": "Peace Tower 9F-910, Peace Avenue 54, Chingeltei District, 3rd Khoroo, Ulaanbaatar 15172, Mongolia",
+      "phone": "Phone",
+      "phoneValue": "7010 6779 / 9666 7009",
+      "email": "Email",
+      "emailValue": "sayandentalclinic@gmail.com",
+      "hours": "Working Hours",
+      "hoursValue": "Mon-Sat: 09:00 - 18:00"
+    },
+    "form": {
+      "name": "Your Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "message": "Your Message",
+      "submit": "Send Message",
+      "success": "Message sent successfully!",
+      "error": "Failed to send. Please try again."
+    }
+  },
+  "footer": {
+    "description": "Sayan Dent provides comprehensive dental care with modern technology and experienced professionals. Your smile is our priority.",
+    "quickLinks": "Quick Links",
+    "services": "Our Services",
+    "contact": "Contact Info",
+    "newsletter": {
+      "title": "Stay Updated",
+      "subtitle": "Subscribe for dental health tips and special offers",
+      "placeholder": "Your email address",
+      "button": "Subscribe",
+      "success": "Thank you for subscribing!"
+    },
+    "copyright": "© 2026 Sayan Dent. All rights reserved."
+  }
+}
