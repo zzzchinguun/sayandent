@@ -65,7 +65,12 @@ export function Contact() {
                   <h3 className="text-2xl font-bold text-primary-900 mb-2">{t('form.success')}</h3>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form
+                  action="."
+                  method="post"
+                  onSubmit={(e) => { e.preventDefault(); handleSubmit(onSubmit)(e); }}
+                  className="space-y-6"
+                >
                   <Input label={t('form.name')} id="name" placeholder="John Doe" error={errors.name?.message} {...register('name')} />
                   <Input label={t('form.email')} id="email" type="email" placeholder="john@example.com" error={errors.email?.message} {...register('email')} />
                   <Input label={t('form.phone')} id="phone" type="tel" placeholder="+976 9999 9999" {...register('phone')} />

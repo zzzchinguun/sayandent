@@ -189,7 +189,12 @@ export function Appointment() {
                   <Button className="mt-2" onClick={() => setIsSubmitted(false)}>{t('form.submitAnother')}</Button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                <form
+                  action="."
+                  method="post"
+                  onSubmit={(e) => { e.preventDefault(); handleSubmit(onSubmit)(e); }}
+                  className="space-y-8"
+                >
                   {/* Patient Info */}
                   <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }}>
                     <div className="flex items-center gap-2 mb-4">
