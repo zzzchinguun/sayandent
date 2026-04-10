@@ -251,6 +251,37 @@ export function Hero() {
           </div>
         )}
       </section>
+
+      {/* Mobile-only doctors strip — sits in document flow below the sticky hero,
+          so it never overlaps the headline. Hidden on md+ where the desktop
+          carousel takes over inside the hero. */}
+      <section className="md:hidden bg-white py-10 border-t border-earth-100">
+        <div className="px-4 mb-4">
+          <h3 className="text-2xl font-bold text-primary-900">{t('doctorsTitle')}</h3>
+        </div>
+        <div className="flex gap-3 overflow-x-auto pb-2 px-4 snap-x snap-mandatory scrollbar-none">
+          {staff.map((member) => (
+            <div
+              key={member.id}
+              className="relative shrink-0 snap-start w-[200px] h-[280px] rounded-2xl overflow-hidden bg-primary-900 shadow-xl border border-earth-200"
+            >
+              {member.image_url && (
+                <Image
+                  src={member.image_url}
+                  alt={member.name}
+                  fill
+                  sizes="200px"
+                  className="object-cover"
+                />
+              )}
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-linear-to-t from-black/80 to-transparent">
+                <p className="text-white font-semibold text-sm leading-tight">{member.name}</p>
+                <p className="text-white/70 text-[11px] mt-0.5">{member.title}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

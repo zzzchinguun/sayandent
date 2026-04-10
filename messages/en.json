@@ -14,7 +14,8 @@
   "hero": {
     "titleLine1": "Your\nSmile,",
     "titleLine2": "Our\nPriority",
-    "shortDescription": "Professional dental care for the whole family. Modern equipment, experienced doctors, and a comfortable environment."
+    "shortDescription": "Professional dental care for the whole family. Modern equipment, experienced doctors, and a comfortable environment.",
+    "doctorsTitle": "Our Doctors"
   },
   "services": {
     "titleText1": "Our",
