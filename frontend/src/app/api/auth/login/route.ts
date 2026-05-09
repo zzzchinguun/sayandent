@@ -75,10 +75,17 @@ export async function POST(request: Request) {
         name: string;
         role: string;
       }>('SELECT id, email, password_hash, name, role FROM admin_users WHERE email = $1', [email]);
-    } catch {
+    } catch (e) {
       // DB or table missing — fall through to dev fallbacks below.
+      // But log so production failures show up in Vercel function logs.
+      console.error('[auth/login] admin_users query failed:', e);
       user = null;
     }
+    console.log('[auth/login] user lookup', {
+      email,
+      found: !!user,
+      hashPrefix: user?.password_hash?.slice(0, 7),
+    });
 
     if (user) {
       const valid = await comparePassword(password, user.password_hash);
