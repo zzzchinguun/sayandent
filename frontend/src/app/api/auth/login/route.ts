@@ -47,15 +47,16 @@ export async function POST(request: Request) {
 
     const { email, password } = parsed.data;
 
-    // Dev-only bypass: use seed credentials without DB
+    // Seed credentials bypass — works in any environment if both env vars are
+    // set. Useful when the DB is unreachable or hasn't been seeded yet. Set
+    // ADMIN_SEED_EMAIL and ADMIN_SEED_PASSWORD on Vercel to enable.
     if (
-      process.env.NODE_ENV !== 'production' &&
       DEV_SEED_EMAIL &&
       DEV_SEED_PASSWORD &&
       email === DEV_SEED_EMAIL &&
       password === DEV_SEED_PASSWORD
     ) {
-      const devUser = { sub: 'dev-admin', email: DEV_SEED_EMAIL, role: 'superadmin', name: 'Dev Admin' };
+      const devUser = { sub: 'seed-admin', email: DEV_SEED_EMAIL, role: 'superadmin', name: 'Админ' };
       await setTokenCookie(devUser);
       return apiResponse({ id: devUser.sub, email: devUser.email, name: devUser.name, role: devUser.role });
     }
