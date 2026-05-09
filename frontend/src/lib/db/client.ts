@@ -1,14 +1,21 @@
-import { Pool } from 'pg';
+import { Pool, type PoolConfig } from 'pg';
 
 const globalForPg = globalThis as unknown as { pool: Pool };
 
-export const pool =
-  globalForPg.pool ??
-  new Pool({
-    connectionString: process.env.DATABASE_URL,
-    max: 25,
-    idleTimeoutMillis: 120000,
-  });
+// Enable SSL whenever the connection string asks for it. We accept the cert
+// chain even if it's self-signed (typical for self-hosted Postgres on a VPS) —
+// `pg` defaults to strict verification which breaks the handshake.
+const url = process.env.DATABASE_URL ?? '';
+const wantsSsl = /[?&]sslmode=(require|verify-ca|verify-full|prefer)/i.test(url);
+
+const config: PoolConfig = {
+  connectionString: url,
+  max: 25,
+  idleTimeoutMillis: 120000,
+  ...(wantsSsl ? { ssl: { rejectUnauthorized: false } } : {}),
+};
+
+export const pool = globalForPg.pool ?? new Pool(config);
 
 if (process.env.NODE_ENV !== 'production') globalForPg.pool = pool;
 
