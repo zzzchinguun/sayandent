@@ -33,5 +33,19 @@ export function apiNotFound(message = 'Resource not found') {
 
 export function apiInternalError(err?: unknown) {
   if (err) console.error('[API Error]', err);
-  return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+  // Temporarily surface the underlying error message so deployment issues
+  // are visible from the client without scraping Vercel logs. Stack traces
+  // are stripped — only the .message is exposed.
+  const detail =
+    err instanceof Error
+      ? err.message
+      : typeof err === 'string'
+        ? err
+        : err
+          ? JSON.stringify(err)
+          : undefined;
+  return NextResponse.json(
+    { success: false, error: 'Internal server error', detail },
+    { status: 500 },
+  );
 }
