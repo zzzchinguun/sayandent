@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { Plus, Trash2, X } from 'lucide-react';
 
 interface AdminUser {
   id: string;
@@ -10,10 +11,17 @@ interface AdminUser {
   created_at: string;
 }
 
+const ROLE_LABELS: Record<string, string> = {
+  admin: 'Админ',
+  superadmin: 'Супер админ',
+};
+
 export default function UsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ email: '', password: '', name: '', role: 'admin' });
 
   const fetchUsers = useCallback(async () => {
@@ -28,89 +36,166 @@ export default function UsersPage() {
 
   const createUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch('/api/admin/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    });
-    const data = await res.json();
-    if (data.success) {
-      setShowForm(false);
-      setForm({ email: '', password: '', name: '', role: 'admin' });
-      fetchUsers();
-    } else {
-      alert(data.error || 'Failed to create user');
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setShowForm(false);
+        setForm({ email: '', password: '', name: '', role: 'admin' });
+        fetchUsers();
+      } else {
+        setError(data.error || 'Хэрэглэгч үүсгэхэд алдаа гарлаа');
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const deleteUser = async (id: string) => {
-    if (!confirm('Delete this admin user?')) return;
+    if (!confirm('Энэ хэрэглэгчийг устгах уу?')) return;
     await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
     fetchUsers();
   };
 
+  const inputClass = 'w-full px-3 py-2.5 text-sm rounded-lg border border-stone-200 bg-white text-stone-900 placeholder:text-stone-400 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-primary-500';
+  const labelClass = 'block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1.5';
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Admin Users</h1>
-        <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-          {showForm ? 'Cancel' : 'Add User'}
+        <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-50">Хэрэглэгчид</h2>
+        <button
+          onClick={() => { setShowForm(!showForm); setError(null); }}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
+        >
+          {showForm ? <><X size={16} /> Болих</> : <><Plus size={16} /> Хэрэглэгч нэмэх</>}
         </button>
       </div>
 
       {showForm && (
-        <form onSubmit={createUser} className="bg-white rounded-xl border border-gray-200 p-6 mb-6 space-y-4 max-w-md">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg" required />
+        <form
+          onSubmit={createUser}
+          className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6 mb-6 max-w-md"
+        >
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <label className={labelClass}>Нэр</label>
+              <input
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className={inputClass}
+                required
+              />
+            </div>
+            <div>
+              <label className={labelClass}>И-мэйл</label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className={inputClass}
+                required
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Нууц үг</label>
+              <input
+                type="password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                className={inputClass}
+                required
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Эрх</label>
+              <select
+                value={form.role}
+                onChange={(e) => setForm({ ...form, role: e.target.value })}
+                className={inputClass}
+              >
+                <option value="admin">Админ</option>
+                <option value="superadmin">Супер админ</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg" required />
+
+          {error && <div className="mt-4 text-sm text-red-600 dark:text-red-400">{error}</div>}
+
+          <div className="mt-5 flex items-center gap-3">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="px-5 py-2 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 transition-colors"
+            >
+              {submitting ? 'Хадгалж байна...' : 'Үүсгэх'}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setShowForm(false); setError(null); }}
+              className="px-5 py-2 text-sm font-medium rounded-lg border border-stone-200 text-stone-700 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800 transition-colors"
+            >
+              Болих
+            </button>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-            <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg">
-              <option value="admin">Admin</option>
-              <option value="superadmin">Superadmin</option>
-            </select>
-          </div>
-          <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">Create</button>
         </form>
       )}
 
-      {loading ? <div className="text-gray-500">Loading...</div> : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      {loading ? (
+        <div className="text-stone-500 dark:text-stone-400">Уншиж байна...</div>
+      ) : (
+        <div className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-stone-50 dark:bg-stone-800/60 border-b border-stone-200 dark:border-stone-700">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Name</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Email</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Role</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Created</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Actions</th>
+                <th className="text-left px-4 py-3 font-medium text-stone-500 dark:text-stone-400">Нэр</th>
+                <th className="text-left px-4 py-3 font-medium text-stone-500 dark:text-stone-400">И-мэйл</th>
+                <th className="text-left px-4 py-3 font-medium text-stone-500 dark:text-stone-400">Эрх</th>
+                <th className="text-left px-4 py-3 font-medium text-stone-500 dark:text-stone-400">Үүсгэсэн</th>
+                <th className="text-right px-4 py-3 font-medium text-stone-500 dark:text-stone-400 w-20">Үйлдэл</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
               {users.map((u) => (
-                <tr key={u.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium">{u.name}</td>
-                  <td className="px-4 py-3">{u.email}</td>
+                <tr key={u.id} className="hover:bg-stone-50 dark:hover:bg-stone-800/40">
+                  <td className="px-4 py-3 font-medium text-stone-900 dark:text-stone-100">{u.name}</td>
+                  <td className="px-4 py-3 text-stone-600 dark:text-stone-400">{u.email}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${u.role === 'superadmin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
-                      {u.role}
+                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                      u.role === 'superadmin'
+                        ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300'
+                        : 'bg-primary-100 text-primary-800 dark:bg-primary-900/40 dark:text-primary-300'
+                    }`}>
+                      {ROLE_LABELS[u.role] ?? u.role}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-500">{new Date(u.created_at).toLocaleDateString()}</td>
-                  <td className="px-4 py-3">
-                    <button onClick={() => deleteUser(u.id)} className="text-red-600 hover:underline text-xs">Delete</button>
+                  <td className="px-4 py-3 text-stone-500 dark:text-stone-400 font-mono text-xs">
+                    {new Date(u.created_at).toLocaleDateString('mn-MN')}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() => deleteUser(u.id)}
+                      className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40 transition-colors"
+                      title="Устгах"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </td>
                 </tr>
               ))}
+              {users.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-4 py-8 text-center text-stone-500 dark:text-stone-400">
+                    Хэрэглэгч олдсонгүй
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

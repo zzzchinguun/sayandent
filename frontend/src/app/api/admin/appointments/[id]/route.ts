@@ -3,6 +3,7 @@ import { withAuth } from '@/lib/auth/middleware';
 import { parseBody } from '@/lib/api/validate';
 import { appointmentUpdateSchema } from '@/lib/validations/appointment';
 import { apiResponse, apiNotFound, apiInternalError } from '@/lib/api/response';
+import { findDevAppointmentById } from '@/lib/dev/calendar-fixtures';
 
 export const GET = withAuth(async (_req, ctx) => {
   try {
@@ -11,9 +12,19 @@ export const GET = withAuth(async (_req, ctx) => {
       'SELECT * FROM appointments WHERE id = $1 AND deleted_at IS NULL',
       [id]
     );
-    if (!row) return apiNotFound('Appointment not found');
-    return apiResponse(row);
+    if (row) return apiResponse(row);
+
+    if (process.env.NODE_ENV !== 'production') {
+      const fake = findDevAppointmentById(id);
+      if (fake) return apiResponse(fake);
+    }
+    return apiNotFound('Appointment not found');
   } catch (err) {
+    if (process.env.NODE_ENV !== 'production') {
+      const { id } = await ctx.params;
+      const fake = findDevAppointmentById(id);
+      if (fake) return apiResponse(fake);
+    }
     return apiInternalError(err);
   }
 });
@@ -37,6 +48,10 @@ export const PATCH = withAuth(async (req, ctx) => {
       serviceType: 'service_type',
       notes: 'notes',
       status: 'status',
+      source: 'source',
+      scheduledAt: 'scheduled_at',
+      durationMinutes: 'duration_minutes',
+      doctorId: 'doctor_id',
     };
 
     for (const [key, col] of Object.entries(columnMap)) {

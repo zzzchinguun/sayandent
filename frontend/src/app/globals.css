@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Class-based dark mode: `dark:` applies when an element (or any ancestor)
+   has the `.dark` class. Toggled by the admin ThemeToggle. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Reserve space for the scrollbar so locking body scroll (e.g. opening
    the mobile menu) doesn't shift centered content horizontally. */
 html {
@@ -161,3 +165,8 @@ body {
 ::-webkit-scrollbar-track { background: var(--color-base-200); }
 ::-webkit-scrollbar-thumb { background: var(--color-primary-500); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-primary-600); }
+
+/* Dark-mode scrollbar for admin */
+.dark ::-webkit-scrollbar-track { background: var(--color-earth-800); }
+.dark ::-webkit-scrollbar-thumb { background: var(--color-earth-600); }
+.dark ::-webkit-scrollbar-thumb:hover { background: var(--color-earth-500); }
