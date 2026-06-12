@@ -31,7 +31,7 @@ type NavGroup = {
   label: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
   defaultOpen?: boolean;
-  items: { href: string; label: string }[];
+  items: { href: string; label: string; locked?: boolean }[];
 };
 
 type NavDivider = { kind: 'divider' };
@@ -52,10 +52,10 @@ const NAV: NavItem[] = [
     icon: Stethoscope,
     defaultOpen: false,
     items: [
-      { href: '/admin/diagnosis',       label: 'Эмчийн онош' },
-      { href: '/admin/treatments',      label: 'Эмчилгээ' },
-      { href: '/admin/teeth',           label: 'Шүд' },
-      { href: '/admin/order-diagnosis', label: 'Захиалгын онош' },
+      { href: '/admin/treatments?tab=diagnosis', label: 'Эмчийн онош' },
+      { href: '/admin/treatments?tab=treatment', label: 'Эмчилгээ' },
+      { href: '#teeth',           label: 'Шүд',            locked: true },
+      { href: '#order-diagnosis', label: 'Захиалгын онош', locked: true },
     ],
   },
   { kind: 'divider' },
@@ -131,7 +131,10 @@ function NavLeafItem({ item, pathname, onNavigate }: { item: NavLeaf; pathname: 
 }
 
 function NavGroupItem({ item, pathname, onNavigate }: { item: NavGroup; pathname: string; onNavigate?: () => void }) {
-  const containsActive = item.items.some(s => pathname === s.href || pathname.startsWith(s.href + '/'));
+  const containsActive = item.items.some(s => {
+    const base = s.href.split('?')[0];
+    return !s.locked && (pathname === base || pathname.startsWith(base + '/'));
+  });
   const [open, setOpen] = useState<boolean>(item.defaultOpen ?? containsActive);
   const Icon = item.icon;
 
@@ -149,7 +152,19 @@ function NavGroupItem({ item, pathname, onNavigate }: { item: NavGroup; pathname
       {open && (
         <div className="mt-0.5 ml-7 pl-3 border-l border-stone-200 dark:border-stone-800 space-y-0.5">
           {item.items.map((s) => {
-            const isActive = pathname === s.href || pathname.startsWith(s.href + '/');
+            if (s.locked) {
+              return (
+                <div
+                  key={s.href}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-stone-400 dark:text-stone-600 cursor-not-allowed select-none"
+                >
+                  <span className="flex-1">{s.label}</span>
+                  <Lock size={12} />
+                </div>
+              );
+            }
+            const base = s.href.split('?')[0];
+            const isActive = pathname === base || pathname.startsWith(base + '/');
             return (
               <Link
                 key={s.href}

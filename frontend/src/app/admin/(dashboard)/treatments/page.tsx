@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { use, useEffect, useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 
 // ── Онош (ICD Dental Codes) ──
@@ -132,9 +132,19 @@ function formatPrice(n: number) {
 
 type Tab = 'diagnosis' | 'treatment';
 
-export default function TreatmentsPage() {
-  const [tab, setTab] = useState<Tab>('diagnosis');
+export default function TreatmentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab: tabParam } = use(searchParams);
+  const [tab, setTab] = useState<Tab>(tabParam === 'treatment' ? 'treatment' : 'diagnosis');
   const [search, setSearch] = useState('');
+
+  // Sidebar links navigate to this same page with a different ?tab= — keep in sync.
+  useEffect(() => {
+    setTab(tabParam === 'treatment' ? 'treatment' : 'diagnosis');
+  }, [tabParam]);
 
   const filteredDiagnoses = useMemo(() => {
     if (!search) return DIAGNOSES;
