@@ -9,7 +9,10 @@ export const GET = withAuth(async (_req, ctx) => {
   try {
     const { id } = await ctx.params;
     const row = await queryOne(
-      'SELECT * FROM appointments WHERE id = $1 AND deleted_at IS NULL',
+      `SELECT a.*, trim(e.last_name || ' ' || e.first_name) AS doctor_name
+       FROM appointments a
+       LEFT JOIN employees e ON e.id = a.doctor_id
+       WHERE a.id = $1 AND a.deleted_at IS NULL`,
       [id]
     );
     if (row) return apiResponse(row);

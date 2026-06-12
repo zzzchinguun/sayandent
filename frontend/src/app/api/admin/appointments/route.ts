@@ -33,7 +33,10 @@ export const GET = withAuth(async (req) => {
 
     const [rows, countResult] = await Promise.all([
       query(
-        `SELECT a.* FROM appointments a ${whereClause} ORDER BY a.created_at DESC LIMIT $1 OFFSET $2`,
+        `SELECT a.*, trim(e.last_name || ' ' || e.first_name) AS doctor_name
+         FROM appointments a
+         LEFT JOIN employees e ON e.id = a.doctor_id
+         ${whereClause} ORDER BY a.created_at DESC LIMIT $1 OFFSET $2`,
         params
       ),
       query<{ count: string }>(
