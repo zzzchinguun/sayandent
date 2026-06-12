@@ -96,6 +96,13 @@ function CreateAppointmentInner() {
       .slice(0, 8);
   }, [patients, patientSearch]);
 
+  // An already-registered patient with the same registry number, if any.
+  const regDuplicate = useMemo(() => {
+    const q = newPatient.registry_number.trim().toLowerCase();
+    if (!q) return null;
+    return patients.find((p) => (p.registry_number ?? '').toLowerCase() === q) ?? null;
+  }, [patients, newPatient.registry_number]);
+
   const [form, setForm] = useState({
     branch_id: branchId,
     doctor_id: userId,
@@ -148,6 +155,11 @@ function CreateAppointmentInner() {
       } else {
         if (!newPatient.last_name || !newPatient.first_name || !newPatient.phone) {
           setError('Овог, нэр, утас заавал шаардлагатай');
+          setSaving(false);
+          return;
+        }
+        if (regDuplicate) {
+          setError('Энэ регистрийн дугаартай эмчлүүлэгч аль хэдийн бүртгэлтэй байна');
           setSaving(false);
           return;
         }
@@ -353,6 +365,23 @@ function CreateAppointmentInner() {
                   onChange={(e) => setNewPatient((p) => ({ ...p, registry_number: e.target.value }))}
                   className={inputClass}
                 />
+                {regDuplicate && (
+                  <div className="mt-1.5 flex items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-300">
+                    <span>
+                      Бүртгэлтэй: №{regDuplicate.card_number} {regDuplicate.last_name} {regDuplicate.first_name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPatient(regDuplicate);
+                        setPatientMode('existing');
+                      }}
+                      className="shrink-0 font-medium underline underline-offset-2 hover:opacity-70"
+                    >
+                      Сонгох
+                    </button>
+                  </div>
+                )}
               </div>
               <div>
                 <label className={labelClass}>Утас <span className="text-red-500">*</span></label>

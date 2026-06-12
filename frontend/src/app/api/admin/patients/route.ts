@@ -65,6 +65,10 @@ export const POST = withAuth(async (request) => {
 
     return apiResponse(row, 201);
   } catch (err) {
+    // 23505 = Postgres unique violation (duplicate registry number)
+    if ((err as { code?: string }).code === '23505') {
+      return apiBadRequest('Энэ регистрийн дугаартай эмчлүүлэгч аль хэдийн бүртгэлтэй байна');
+    }
     return apiInternalError(err);
   }
 });
