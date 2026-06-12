@@ -167,9 +167,9 @@ export const GET = withAuth(async (req) => {
         query(
           `SELECT a.id, a.full_name, a.phone, a.email, a.service_type, a.notes,
                   a.status, a.source, a.scheduled_at, a.duration_minutes,
-                  a.doctor_id, st.name AS doctor_name
+                  a.doctor_id, trim(e.last_name || ' ' || e.first_name) AS doctor_name
            FROM appointments a
-           LEFT JOIN staff_translations st ON st.staff_id = a.doctor_id AND st.locale = 'mn'
+           LEFT JOIN employees e ON e.id = a.doctor_id
            WHERE a.deleted_at IS NULL
              AND a.scheduled_at IS NOT NULL
              AND a.scheduled_at >= $1::timestamptz
@@ -179,9 +179,9 @@ export const GET = withAuth(async (req) => {
         ),
         query(
           `SELECT b.id, b.doctor_id, b.starts_at, b.ends_at, b.reason,
-                  st.name AS doctor_name
+                  trim(e.last_name || ' ' || e.first_name) AS doctor_name
            FROM doctor_unavailable_blocks b
-           LEFT JOIN staff_translations st ON st.staff_id = b.doctor_id AND st.locale = 'mn'
+           LEFT JOIN employees e ON e.id = b.doctor_id
            WHERE b.deleted_at IS NULL
              AND b.starts_at < $2::timestamptz
              AND b.ends_at > $1::timestamptz
