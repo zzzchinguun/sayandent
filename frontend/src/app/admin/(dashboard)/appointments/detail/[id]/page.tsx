@@ -3,6 +3,7 @@
 import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, Crown, Check } from 'lucide-react';
+import TreatmentStep from '@/components/admin/TreatmentStep';
 
 interface Appointment {
   id: string;
@@ -111,14 +112,16 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
     return () => { cancelled = true; };
   }, [id]);
 
-  async function saveStatus() {
+  // `overrideStatus` exists because React state updates are async: a button
+  // that calls setStatusValue(x) then saves would still read the old value.
+  async function saveStatus(overrideStatus?: string) {
     if (!appt) return;
     setSavingStatus(true);
     try {
       await fetch(`/api/admin/appointments/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: statusValue, notes: notesValue }),
+        body: JSON.stringify({ status: overrideStatus ?? statusValue, notes: notesValue }),
       });
     } finally {
       setSavingStatus(false);
@@ -247,7 +250,7 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
                     </select>
                     <button
                       type="button"
-                      onClick={saveStatus}
+                      onClick={() => saveStatus()}
                       disabled={savingStatus}
                       className="shrink-0 inline-flex items-center justify-center w-10 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 transition-colors"
                       title="Хадгалах"
@@ -346,7 +349,7 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
               <div className="mt-8 flex justify-end">
                 <button
                   type="button"
-                  onClick={() => { setStatusValue('arrived'); saveStatus(); }}
+                  onClick={() => { setStatusValue('arrived'); saveStatus('arrived'); setStep(2); }}
                   className="px-6 py-2.5 text-sm font-semibold rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
                 >
                   Ирсэн
@@ -356,9 +359,12 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
           )}
 
           {step === 2 && (
-            <div className="text-stone-500 dark:text-stone-400 text-sm">
-              Эмчилгээний бүртгэл нэмж байгаа болно. (Энд эмчилгээний жагсаалт оруулах боломжтой болно)
-            </div>
+            <TreatmentStep
+              appointmentId={id}
+              visitType={visitType}
+              setVisitType={setVisitType}
+              onExamDone={() => { setStatusValue('examined'); setStep(3); }}
+            />
           )}
 
           {step === 3 && (
