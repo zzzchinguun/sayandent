@@ -103,6 +103,47 @@ export async function POST(request: Request) {
       });
     }
 
+    // Employees (doctors, receptionists, admins) log in with their work email.
+    let emp: {
+      id: string;
+      email: string;
+      password_hash: string | null;
+      last_name: string;
+      first_name: string;
+      role: string;
+    } | null = null;
+    try {
+      emp = await queryOne(
+        `SELECT id, email, password_hash, last_name, first_name, role
+         FROM employees
+         WHERE lower(email) = lower($1) AND is_active = true AND deleted_at IS NULL`,
+        [email],
+      );
+    } catch (e) {
+      console.error('[auth/login] employees query failed:', e);
+      emp = null;
+    }
+
+    if (emp?.password_hash) {
+      const valid = await comparePassword(password, emp.password_hash);
+      if (!valid) return apiBadRequest('Invalid email or password');
+
+      const empData = {
+        sub: emp.id,
+        email: emp.email,
+        role: emp.role,
+        name: `${emp.last_name} ${emp.first_name}`.trim(),
+      };
+      await setTokenCookie(empData);
+
+      return apiResponse({
+        id: emp.id,
+        email: emp.email,
+        name: empData.name,
+        role: emp.role,
+      });
+    }
+
     // Dev-only: allow logging in as any mocked employee
     if (process.env.NODE_ENV !== 'production') {
       const empUser = tryDevEmployeeLogin(email, password);
