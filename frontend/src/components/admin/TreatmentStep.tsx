@@ -2,15 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Trash2 } from 'lucide-react';
-import {
-  DIAGNOSES,
-  TREATMENTS,
-  toothLabel,
-  PERMANENT_UPPER,
-  PERMANENT_LOWER,
-  DECIDUOUS_UPPER,
-  DECIDUOUS_LOWER,
-} from '@/lib/dental/codes';
+import { DIAGNOSES, TREATMENTS, toothLabel } from '@/lib/dental/codes';
+import Odontogram from './Odontogram';
 
 export interface TreatmentItem {
   tooth_code: string | null;
@@ -180,8 +173,6 @@ export default function TreatmentStep({
     }
   }
 
-  const upper = dentition === 'permanent' ? PERMANENT_UPPER : DECIDUOUS_UPPER;
-  const lower = dentition === 'permanent' ? PERMANENT_LOWER : DECIDUOUS_LOWER;
   const total = items.reduce((s, it) => s + it.price - it.discount, 0);
 
   return (
@@ -273,9 +264,8 @@ export default function TreatmentStep({
             ))}
           </div>
 
-          <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-rose-50/60 dark:bg-rose-950/10 p-4 space-y-6">
-            <ToothRow codes={upper} selected={selectedTeeth} onToggle={toggleTooth} arch="Дээд" />
-            <ToothRow codes={lower} selected={selectedTeeth} onToggle={toggleTooth} arch="Доод" />
+          <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4">
+            <Odontogram dentition={dentition} selected={selectedTeeth} onToggle={toggleTooth} />
           </div>
           {selectedTeeth.size > 0 && (
             <p className="mt-2 text-xs text-stone-500 dark:text-stone-400">
@@ -425,44 +415,6 @@ export default function TreatmentStep({
         >
           Үзлэг дууссан
         </button>
-      </div>
-    </div>
-  );
-}
-
-function ToothRow({
-  codes,
-  selected,
-  onToggle,
-  arch,
-}: {
-  codes: string[];
-  selected: Set<string>;
-  onToggle: (code: string) => void;
-  arch: string;
-}) {
-  const mid = codes.length / 2;
-  return (
-    <div>
-      <p className="text-[11px] uppercase tracking-wide text-stone-400 dark:text-stone-500 mb-1.5">{arch}</p>
-      <div className="flex flex-wrap items-center gap-1">
-        {codes.map((c, i) => (
-          <span key={c} className="flex items-center">
-            {i === mid && <span className="w-px self-stretch bg-stone-300 dark:bg-stone-600 mx-1.5" />}
-            <button
-              type="button"
-              onClick={() => onToggle(c)}
-              title={c}
-              className={`w-9 h-10 rounded-lg border text-xs font-semibold transition-colors ${
-                selected.has(c)
-                  ? 'bg-primary-600 border-primary-600 text-white'
-                  : 'bg-white border-stone-200 text-stone-700 hover:border-primary-400 hover:text-primary-700 dark:bg-stone-800 dark:border-stone-700 dark:text-stone-300'
-              }`}
-            >
-              {c}
-            </button>
-          </span>
-        ))}
       </div>
     </div>
   );
