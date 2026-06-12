@@ -1,11 +1,20 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Search, UserPlus, X } from 'lucide-react';
 
 interface Doctor { id: string; name: string }
+
+interface PatientLite {
+  id: string;
+  card_number: number;
+  last_name: string;
+  first_name: string;
+  registry_number: string | null;
+  phone: string;
+}
 
 const DEFAULT_DOCTORS: Doctor[] = [
   { id: '1', name: 'Сонин Батсанаа' },
@@ -56,10 +65,38 @@ function CreateAppointmentInner() {
 
   const [doctors, setDoctors] = useState<Doctor[]>(DEFAULT_DOCTORS);
 
-  const [form, setForm] = useState({
-    full_name: '',
+  // ── Patient picker state ─────────────────────────────────────────────
+  const [patients, setPatients] = useState<PatientLite[]>([]);
+  const [patientMode, setPatientMode] = useState<'existing' | 'new'>('existing');
+  const [patientSearch, setPatientSearch] = useState('');
+  const [selectedPatient, setSelectedPatient] = useState<PatientLite | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [newPatient, setNewPatient] = useState({
+    last_name: '',
+    first_name: '',
+    registry_number: '',
     phone: '',
     email: '',
+  });
+
+  const filteredPatients = useMemo(() => {
+    const q = patientSearch.trim().toLowerCase();
+    if (!q) return patients.slice(0, 8);
+    return patients
+      .filter((p) => {
+        const name = `${p.last_name} ${p.first_name}`.toLowerCase();
+        const reverse = `${p.first_name} ${p.last_name}`.toLowerCase();
+        return (
+          name.includes(q) ||
+          reverse.includes(q) ||
+          (p.registry_number ?? '').toLowerCase().includes(q) ||
+          p.phone.includes(q)
+        );
+      })
+      .slice(0, 8);
+  }, [patients, patientSearch]);
+
+  const [form, setForm] = useState({
     branch_id: branchId,
     doctor_id: userId,
     scheduled_at: parsedStart,
@@ -80,6 +117,11 @@ function CreateAppointmentInner() {
         .map((e) => ({ id: e.id, name: `${e.last_name} ${e.first_name}`.trim() }));
       if (items.length) setDoctors(items);
     }).catch(() => {});
+
+    // Patient list for the searchable picker
+    fetch('/api/admin/patients').then((r) => r.json()).then((d) => {
+      if (d.success) setPatients(d.data as PatientLite[]);
+    }).catch(() => {});
   }, []);
 
   function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
@@ -91,10 +133,52 @@ function CreateAppointmentInner() {
     setSaving(true);
     setError(null);
     try {
+      // Resolve the patient: either picked from the registry, or created now.
+      let patient: { full_name: string; phone: string; email?: string };
+      if (patientMode === 'existing') {
+        if (!selectedPatient) {
+          setError('Эмчлүүлэгч сонгоно уу');
+          setSaving(false);
+          return;
+        }
+        patient = {
+          full_name: `${selectedPatient.last_name} ${selectedPatient.first_name}`.trim(),
+          phone: selectedPatient.phone,
+        };
+      } else {
+        if (!newPatient.last_name || !newPatient.first_name || !newPatient.phone) {
+          setError('Овог, нэр, утас заавал шаардлагатай');
+          setSaving(false);
+          return;
+        }
+        const created = await fetch('/api/admin/patients', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            last_name: newPatient.last_name,
+            first_name: newPatient.first_name,
+            registry_number: newPatient.registry_number || undefined,
+            phone: newPatient.phone,
+            email: newPatient.email || undefined,
+          }),
+        });
+        const createdData = await created.json().catch(() => ({}));
+        if (!createdData.success) {
+          setError(createdData.error || 'Эмчлүүлэгч үүсгэж чадсангүй');
+          setSaving(false);
+          return;
+        }
+        patient = {
+          full_name: `${newPatient.last_name} ${newPatient.first_name}`.trim(),
+          phone: newPatient.phone,
+          email: newPatient.email || undefined,
+        };
+      }
+
       const body = {
-        full_name: form.full_name,
-        phone: form.phone,
-        email: form.email || undefined,
+        full_name: patient.full_name,
+        phone: patient.phone,
+        email: patient.email,
         scheduled_at: new Date(form.scheduled_at).toISOString(),
         duration_minutes: form.duration_minutes,
         doctor_id: form.doctor_id || undefined,
@@ -156,39 +240,140 @@ function CreateAppointmentInner() {
 
       <div className="space-y-6">
         <section className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6">
-          <h3 className="text-sm font-semibold text-stone-900 dark:text-stone-100 uppercase tracking-wide mb-4">
-            Эмчлүүлэгчийн мэдээлэл
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2">
-              <label className={labelClass}>Овог нэр <span className="text-red-500">*</span></label>
-              <input
-                value={form.full_name}
-                onChange={(e) => set('full_name', e.target.value)}
-                className={inputClass}
-                required
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Утас <span className="text-red-500">*</span></label>
-              <input
-                type="tel"
-                value={form.phone}
-                onChange={(e) => set('phone', e.target.value)}
-                className={inputClass}
-                required
-              />
-            </div>
-            <div>
-              <label className={labelClass}>И-мэйл</label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => set('email', e.target.value)}
-                className={inputClass}
-              />
+          <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-stone-100 uppercase tracking-wide">
+              Эмчлүүлэгчийн мэдээлэл
+            </h3>
+            <div className="flex rounded-lg border border-stone-200 dark:border-stone-700 overflow-hidden text-sm">
+              <button
+                type="button"
+                onClick={() => setPatientMode('existing')}
+                className={
+                  patientMode === 'existing'
+                    ? 'px-4 py-1.5 bg-primary-600 text-white font-medium'
+                    : 'px-4 py-1.5 text-stone-600 hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-stone-800'
+                }
+              >
+                Бүртгэлтэй
+              </button>
+              <button
+                type="button"
+                onClick={() => setPatientMode('new')}
+                className={
+                  patientMode === 'new'
+                    ? 'px-4 py-1.5 bg-primary-600 text-white font-medium'
+                    : 'px-4 py-1.5 text-stone-600 hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-stone-800'
+                }
+              >
+                <span className="inline-flex items-center gap-1.5"><UserPlus size={14} /> Шинэ</span>
+              </button>
             </div>
           </div>
+
+          {patientMode === 'existing' ? (
+            selectedPatient ? (
+              <div className="flex items-center justify-between gap-4 rounded-lg border border-primary-200 bg-primary-50/60 dark:border-primary-900 dark:bg-primary-950/30 px-4 py-3">
+                <div className="text-sm">
+                  <p className="font-medium text-stone-900 dark:text-stone-100">
+                    №{selectedPatient.card_number} — {selectedPatient.last_name} {selectedPatient.first_name}
+                  </p>
+                  <p className="text-stone-600 dark:text-stone-400">
+                    {selectedPatient.registry_number || 'Регистргүй'} · {selectedPatient.phone}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setSelectedPatient(null); setPatientSearch(''); }}
+                  className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg text-stone-500 hover:bg-white hover:text-stone-700 dark:hover:bg-stone-800"
+                  title="Өөр эмчлүүлэгч сонгох"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ) : (
+              <div className="relative max-w-xl">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                <input
+                  value={patientSearch}
+                  onChange={(e) => { setPatientSearch(e.target.value); setDropdownOpen(true); }}
+                  onFocus={() => setDropdownOpen(true)}
+                  onBlur={() => setTimeout(() => setDropdownOpen(false), 150)}
+                  placeholder="Нэр, регистр эсвэл утсаар хайх..."
+                  className={inputClass + ' pl-9'}
+                />
+                {dropdownOpen && (
+                  <div className="absolute z-20 mt-1 w-full max-h-72 overflow-y-auto rounded-lg border border-stone-200 bg-white shadow-lg dark:border-stone-700 dark:bg-stone-800">
+                    {filteredPatients.length === 0 ? (
+                      <p className="px-4 py-3 text-sm text-stone-500 dark:text-stone-400">
+                        Олдсонгүй — &ldquo;Шинэ&rdquo; товчоор бүртгэнэ үү
+                      </p>
+                    ) : (
+                      filteredPatients.map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onMouseDown={() => { setSelectedPatient(p); setDropdownOpen(false); }}
+                          className="w-full text-left px-4 py-2.5 text-sm hover:bg-stone-50 dark:hover:bg-stone-700/60"
+                        >
+                          <span className="font-medium text-stone-900 dark:text-stone-100">
+                            №{p.card_number} {p.last_name} {p.first_name}
+                          </span>
+                          <span className="ml-2 text-stone-500 dark:text-stone-400">
+                            {p.registry_number || '—'} · {p.phone}
+                          </span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label className={labelClass}>Овог <span className="text-red-500">*</span></label>
+                <input
+                  value={newPatient.last_name}
+                  onChange={(e) => setNewPatient((p) => ({ ...p, last_name: e.target.value }))}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Нэр <span className="text-red-500">*</span></label>
+                <input
+                  value={newPatient.first_name}
+                  onChange={(e) => setNewPatient((p) => ({ ...p, first_name: e.target.value }))}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Регистр</label>
+                <input
+                  value={newPatient.registry_number}
+                  onChange={(e) => setNewPatient((p) => ({ ...p, registry_number: e.target.value }))}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Утас <span className="text-red-500">*</span></label>
+                <input
+                  type="tel"
+                  value={newPatient.phone}
+                  onChange={(e) => setNewPatient((p) => ({ ...p, phone: e.target.value }))}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>И-мэйл</label>
+                <input
+                  type="email"
+                  value={newPatient.email}
+                  onChange={(e) => setNewPatient((p) => ({ ...p, email: e.target.value }))}
+                  className={inputClass}
+                />
+              </div>
+            </div>
+          )}
         </section>
 
         <section className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6">

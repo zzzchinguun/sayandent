@@ -287,6 +287,22 @@ export default function AppointmentsCalendar() {
     setMounted(true);
   }, []);
 
+  // Real doctor list for the day view's per-doctor columns. Falls back to the
+  // static defaults while loading / if the request fails.
+  const [doctors, setDoctors] = useState<{ id: string; name: string }[]>(DEFAULT_DOCTORS);
+  useEffect(() => {
+    fetch('/api/admin/employees')
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d.success) return;
+        const items = (d.data as Array<{ id: string; first_name: string; last_name: string; role: string; is_active?: boolean }>)
+          .filter((e) => e.role === 'doctor' && e.is_active !== false)
+          .map((e) => ({ id: e.id, name: `${e.last_name} ${e.first_name}`.trim() }));
+        if (items.length) setDoctors(items);
+      })
+      .catch(() => {});
+  }, []);
+
   // ── compute the [from, to) range for the active view ─────────────────
   const { rangeFrom, rangeTo, gridDays } = useMemo(() => {
     if (view === 'day') {
@@ -436,7 +452,7 @@ export default function AppointmentsCalendar() {
         ) : loading ? (
           <div className="p-6 text-sm text-stone-500 dark:text-stone-400">Ачаалж байна...</div>
         ) : view === 'day' ? (
-          <DayByDoctorGrid day={focus} events={events} />
+          <DayByDoctorGrid day={focus} events={events} doctors={doctors} />
         ) : view === 'week' ? (
           <DayOrWeekGrid days={gridDays} events={events} focus={focus} />
         ) : (
@@ -716,7 +732,7 @@ const DEFAULT_DOCTORS: { id: string; name: string }[] = [
   { id: '5', name: 'Ганболд Цэнгүүн' },
 ];
 
-function DayByDoctorGrid({ day, events }: { day: Date; events: CalendarEvent[] }) {
+function DayByDoctorGrid({ day, events, doctors: doctorList }: { day: Date; events: CalendarEvent[]; doctors: { id: string; name: string }[] }) {
   const router = useRouter();
   const hours = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i);
   const totalHeight = hours.length * HOUR_HEIGHT;
@@ -726,9 +742,9 @@ function DayByDoctorGrid({ day, events }: { day: Date; events: CalendarEvent[] }
   // Filter to today's events
   const todays = events.filter((e) => e.end > dayStart && e.start < dayEnd);
 
-  // Resolve doctor list: union of defaults and any unique doctor_ids found in today's events
+  // Resolve doctor list: union of the real doctor list and any unique doctor_ids found in today's events
   const doctorMap = new Map<string, string>();
-  for (const d of DEFAULT_DOCTORS) doctorMap.set(d.id, d.name);
+  for (const d of doctorList) doctorMap.set(d.id, d.name);
   for (const ev of todays) {
     const id = ev.kind === 'appt' ? ev.appt.doctor_id : ev.block.doctor_id;
     const name = ev.kind === 'appt' ? ev.appt.doctor_name : ev.block.doctor_name;
