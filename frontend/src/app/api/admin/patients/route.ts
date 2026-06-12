@@ -1,4 +1,5 @@
 import { query, queryOne } from '@/lib/db/client';
+import { withAuth } from '@/lib/auth/middleware';
 import { apiResponse, apiBadRequest, apiInternalError } from '@/lib/api/response';
 
 const DEV_PATIENTS = [
@@ -14,7 +15,7 @@ const DEV_PATIENTS = [
   { id: '10', card_number: 164, last_name: 'Болормаа', first_name: 'Сарантуяа', date_of_birth: '1980-03-15', registry_number: 'ЛЮ80031529', gender: 'female', phone: '99039209', has_allergy: false, patient_type: 'regular', payment_status: 'paid' },
 ];
 
-export async function GET() {
+export const GET = withAuth(async () => {
   try {
     const rows = await query(
       `SELECT id, card_number, last_name, first_name, date_of_birth, registry_number, gender, phone, has_allergy, patient_type, payment_status
@@ -29,9 +30,9 @@ export async function GET() {
     }
     return apiInternalError(err);
   }
-}
+});
 
-export async function POST(request: Request) {
+export const POST = withAuth(async (request) => {
   try {
     const body = await request.json();
     const { last_name, first_name, phone } = body;
@@ -66,4 +67,4 @@ export async function POST(request: Request) {
   } catch (err) {
     return apiInternalError(err);
   }
-}
+});

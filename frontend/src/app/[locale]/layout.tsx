@@ -102,13 +102,16 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
+      <head>
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={`${montserrat.variable} ${playfair.variable} ${exo2.variable} font-sans antialiased bg-base-50 text-primary-900 `}
       >
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
         <NextIntlClientProvider messages={messages}>
           {children}
           <ScrollToTop />

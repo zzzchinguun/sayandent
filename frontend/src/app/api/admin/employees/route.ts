@@ -1,4 +1,5 @@
 import { query } from '@/lib/db/client';
+import { withAuth } from '@/lib/auth/middleware';
 import { apiResponse, apiInternalError } from '@/lib/api/response';
 import { employeesDev } from './_devStore';
 
@@ -17,7 +18,7 @@ const DEV_EMPLOYEES = [
   { id: '10', last_name: 'Отгон', first_name: 'Нарангэрэл', registry_number: 'ХО96040830', email: 'narangerel@sayandent.mn', role: 'admin', phone: '88990011', branch: 'Баянгол салбар', address: 'УБ, Хан-Уул дүүрэг, 15-р хороо', is_active: true },
 ];
 
-export async function GET() {
+export const GET = withAuth(async () => {
   try {
     const rows = await query(
       `SELECT id, last_name, first_name, registry_number, email, role, phone, branch, address, is_active, created_at
@@ -35,7 +36,7 @@ export async function GET() {
     }
     return apiInternalError(err);
   }
-}
+});
 
 // Reference the seed array so the unused-var lint stays quiet — values are
 // kept identical to `_devStore` initial seed.

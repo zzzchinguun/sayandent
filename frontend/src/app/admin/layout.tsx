@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import '../globals.css';
 
 export const metadata: Metadata = {
@@ -13,7 +14,9 @@ export default function AdminRootLayout({
   return (
     <html lang="mn" suppressHydrationWarning>
       <head>
-        <script
+        <Script
+          id="admin-theme-init"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var s=localStorage.getItem('sayandent.theme');var d=window.matchMedia('(prefers-color-scheme:dark)').matches;if(s==='dark'||(!s&&d))document.documentElement.classList.add('dark')}catch(e){}})()`,
           }}

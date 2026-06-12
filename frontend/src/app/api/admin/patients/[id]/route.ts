@@ -1,8 +1,7 @@
 import { NextRequest } from 'next/server';
 import { queryOne, execute } from '@/lib/db/client';
+import { withAuth } from '@/lib/auth/middleware';
 import { apiResponse, apiNotFound, apiInternalError } from '@/lib/api/response';
-
-type Ctx = { params: Promise<{ id: string }> };
 
 const DEV_PATIENTS: Record<string, Record<string, unknown>> = {
   '1':  { id: '1',  card_number: 173, last_name: 'Давагсамбуу',  first_name: 'Батбаяр',    date_of_birth: '1972-10-12', registry_number: 'ИА72101219', gender: 'male',   phone: '95950952', phone2: null, province: 'Улаанбаатар', district: 'Батцэнгэл', address: null, email: null, has_allergy: false, allergies: null, patient_type: 'gold',    payment_status: 'paid' },
@@ -17,7 +16,7 @@ const DEV_PATIENTS: Record<string, Record<string, unknown>> = {
   '10': { id: '10', card_number: 164, last_name: 'Болормаа',      first_name: 'Сарантуяа',  date_of_birth: '1980-03-15', registry_number: 'ЛЮ80031529', gender: 'female', phone: '99039209', phone2: null, province: null, district: null, address: null, email: null, has_allergy: false, allergies: null, patient_type: 'regular', payment_status: 'paid' },
 };
 
-export async function GET(_req: NextRequest, ctx: Ctx) {
+export const GET = withAuth(async (_req: NextRequest, ctx) => {
   const { id } = await ctx.params;
   try {
     const row = await queryOne(
@@ -37,9 +36,9 @@ export async function GET(_req: NextRequest, ctx: Ctx) {
     }
     return apiInternalError(err);
   }
-}
+});
 
-export async function PATCH(req: NextRequest, ctx: Ctx) {
+export const PATCH = withAuth(async (req: NextRequest, ctx) => {
   try {
     const { id } = await ctx.params;
     const body = await req.json();
@@ -76,9 +75,9 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
   } catch (err) {
     return apiInternalError(err);
   }
-}
+});
 
-export async function DELETE(_req: NextRequest, ctx: Ctx) {
+export const DELETE = withAuth(async (_req: NextRequest, ctx) => {
   try {
     const { id } = await ctx.params;
     const count = await execute(
@@ -90,4 +89,4 @@ export async function DELETE(_req: NextRequest, ctx: Ctx) {
   } catch (err) {
     return apiInternalError(err);
   }
-}
+});
